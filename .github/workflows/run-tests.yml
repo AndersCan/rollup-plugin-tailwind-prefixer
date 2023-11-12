@@ -1,0 +1,16 @@
+name: run tests
+
+on:
+  push:
+    # branches:
+    #   - main
+  workflow_dispatch:
+jobs:
+  bun-test:
+    name: bun test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bun test

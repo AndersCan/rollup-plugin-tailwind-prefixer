@@ -1,0 +1,46 @@
+{
+  "name": "rollup-plugin-tailwind-prefixer",
+  "version": "0.0.0",
+  "keywords": ["rollup-plugin", "tailwind"],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "files": [
+    "dist/"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest",
+    "format": "dprint fmt",
+    "pre-commit": "dprint check & bun test",
+    "preversion": "dprint check && bun test && npm run build",
+    "prepublishOnly": "vitest run && npm run build",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@rollup/pluginutils": "^5.0.5",
+    "@types/node": "^20.9.0",
+    "@vitest/coverage-v8": "^0.34.6",
+    "dprint": "^0.42.5",
+    "estree-walker": "^3.0.3",
+    "fast-check": "^3.13.2",
+    "husky": "^8.0.3",
+    "magic-string": "^0.30.5",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0",
+    "vite-plugin-dts": "^3.6.3",
+    "vitest": "^0.34.6"
+  }
+}
