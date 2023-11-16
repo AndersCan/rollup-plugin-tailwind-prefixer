@@ -35,13 +35,18 @@ export function tailwindPrefixer( options: Options = { prefix: "" } ) {
           if ( node.type === "ExpressionStatement" ) {
             if ( node.expression.type === "CallExpression" ) {
               if ( node.expression.callee.type === "Identifier" ) {
-                // console.log( "fn name", node.expression.callee.name );
+                const fnName = node.expression.callee.name;
+                console.log( "fn name", fnName );
+
+                if ( fnName === "prefixer" ) {
+                  console.log( "args", node.expression.arguments );
+                }
               }
             }
           }
 
           if ( node.type === "Literal" ) {
-            console.log( "literal", node.value );
+            // console.log( "literal", node.value );
           }
           if ( node.type === "TaggedTemplateExpression" ) {
             console.log( "ENTERING", node.tag );
@@ -49,29 +54,6 @@ export function tailwindPrefixer( options: Options = { prefix: "" } ) {
 
           if ( node.type === "TemplateLiteral" ) {
             // console.log( "TemplateLiteral", node.quasis );
-          }
-
-          if ( node.type === "TemplateElement" ) {
-            // @ts-expect-error
-            const nodeStart: number = node.start;
-            // @ts-expect-error
-            const nodeEnd: number = node.end;
-            const searchString = "" + code.substring( nodeStart, nodeEnd );
-            // console.log( { searchString, node: node.value.raw } );
-            const matches = finder( searchString, ` class="`, `"` );
-
-            matches.forEach( match => {
-              const cssClass = match.value.slice( ` class="`.length, -1 );
-
-              const prefixed = prefixer( prefix, cssClass );
-
-              const realStart = nodeStart + match.start;
-              const realEnd = realStart + match.end - 3;
-
-              const replace = ` class="${prefixed}"`;
-              console.log( replace );
-              ms.update( realStart, realEnd, replace );
-            } );
           }
         },
         leave: ( node ) => {
