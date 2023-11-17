@@ -1,7 +1,7 @@
-import { describe, expect, test } from "vitest";
-import * as prettier from "prettier";
-import { removeAtRule } from "#src/remove-at-rule";
 import * as csstree from "css-tree";
+import * as prettier from "prettier";
+import { describe, expect, test } from "vitest";
+import { removeAtRule } from "./remove-at-rule";
 
 describe("removeAtRule", () => {
   test("can change simple css class", async () => {
@@ -17,7 +17,7 @@ describe("removeAtRule", () => {
       .foo {display: none;}
     }`,
     );
-    await cssEqual(actual, expected);
+    await cssEqual( actual, expected );
   });
 
   test("can change multi css class", async () => {
@@ -37,7 +37,7 @@ describe("removeAtRule", () => {
       .bar {display: flex;}
     }`,
     );
-    await cssEqual(actual, expected);
+    await cssEqual( actual, expected );
   });
 
   test("can change multi MediaQuery class", async () => {
@@ -50,7 +50,7 @@ describe("removeAtRule", () => {
         }
       }
     `;
-    //"prefers-color-scheme"
+    // "prefers-color-scheme"
     const actual = removeAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
@@ -69,10 +69,10 @@ describe("removeAtRule", () => {
       }
       `,
     );
-    await cssEqual(actual, expected);
+    await cssEqual( actual, expected );
   });
 
-  test.skip("can change multi MediaQuery class -- and not first (this is bugged)", async () => {
+  test("can change multi MediaQuery class when nested", async () => {
     const expected = `
       @media (pointer: coarse) {
         @media (min-width: 720px) {
@@ -82,7 +82,7 @@ describe("removeAtRule", () => {
         }
       }
     `;
-    //"prefers-color-scheme"
+
     const actual = removeAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
@@ -101,10 +101,46 @@ describe("removeAtRule", () => {
       }
       `,
     );
-    await cssEqual(actual, expected);
+    await cssEqual( actual, expected );
   });
 
-  test("moves the classes up to root scope", async () => {
+  test("can change multi MediaQuery class when not directly nested", async () => {
+    const expected = `
+      @media (pointer: coarse) {
+        .foo { display: flex }
+        .bar { display: flex }
+        @media (min-width: 720px) {
+          html.darkmode .dark\:touch\:md\:p-96 {
+            padding: 24rem;
+          }
+        }
+      }
+    `;
+
+    const actual = removeAtRule(
+      {
+        mediaFeatureName: "prefers-color-scheme",
+        mediaFeatureValue: "dark",
+        prefixAsString: "html.darkmode",
+      },
+      `
+      @media (pointer: coarse) {
+        .foo { display: flex }
+        @media (prefers-color-scheme: dark) {
+          @media (min-width: 720px) {
+            .dark\:touch\:md\:p-96 {
+              padding: 24rem;
+            }
+          }
+        }
+        .bar { display: flex }
+      }
+      `,
+    );
+    await cssEqual( actual, expected );
+  });
+
+  test("non-nested MediaQuery is added to global scope (firstChildren)", async () => {
     const expected = `
     .group:hover .group-hover\:underline {
       text-decoration-line: underline;
@@ -133,17 +169,16 @@ describe("removeAtRule", () => {
       }
       `,
     );
-    await cssEqual(actual, expected);
+    await cssEqual( actual, expected );
   });
 });
 
-async function cssEqual(aa: string | csstree.CssNode, b: string) {
-  const a = typeof aa === "string" ? aa : csstree.generate(aa);
-  const [prettyA, prettyB] = await Promise.all([
-    prettier.format(a, { filepath: "a.css" }),
-    prettier.format(b, { filepath: "b.css" }),
-  ]);
+async function cssEqual( aa: string | csstree.CssNode, b: string ) {
+  const a = typeof aa === "string" ? aa : csstree.generate( aa );
+  const [ prettyA, prettyB ] = await Promise.all( [
+    prettier.format( a, { filepath: "a.css" } ),
+    prettier.format( b, { filepath: "b.css" } ),
+  ] );
 
-  // console.log({ prettyA, prettyB });
-  expect(prettyA).toEqual(prettyB);
+  expect( prettyA ).toEqual( prettyB );
 }

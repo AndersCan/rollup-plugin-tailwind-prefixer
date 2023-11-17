@@ -1,41 +1,56 @@
 # rollup-plugin-tailwind-prefixer
 
-> WIP :danger:
+> [!WARNING]\
+> Work in progress
 
-Prefixes _all_ html class definitions with a prefix.
+## Getting started
 
-Currently only works with tag template (`TemplateElement`)
+In rollup or vite config:
 
-```ts
-import { tailwindPrefixer } from "rollup-plugin-tailwind-prefixer";
-tailwindPrefixer( {
-  prefix: "fuzz-",
-  include: "./**/*.ts",
-  exclude: "./excluded/**/*.ts",
-} ),
+```js
+// rollup or vite config
+import { tailwindPrefixerPlugin } from "rollup-plugin-tailwind-prefixer";
+
+tailwindPrefixerPlugin( {
+  prefix: "my-prefix-",
+  js: {
+    functionName: "tw",
+    /**
+     * This will allow the tw function to be treeshaked away.
+     */
+    postPrefixFunctionName: "tw.noop",
+  },
+  css: {
+    /**
+     * Extra: should probably be moved to another repo...
+     *
+     * Replaces the media query for :dark (`@media (prefers-color-scheme: dark)`)
+     * with a custom css class
+     *
+     * @media (prefers-color-scheme: dark) { .dark\:.text-white: color: white }
+     * becomes
+     * .dark-mode .dark\:text-white  { color: white }
+     */
+    darkModeReplacement: ".dark-mode",
+  },
+} );
 ```
 
-Ex:
+In your code:
 
-```ts
-const a = html`<h1> Hello, world</h1>`;
-const b = html`<h1 class="flex flex-1 unrelated-non-tailwind-class"></h1>`;
-const c = html`<h1 class="hover:flex"></h1>`;
-const d = html`<h1 class="sm:focus:hover:flex"></h1>`;
+```js
+// prefix.js
+import { createPrefixer } from "rollup-plugin-tailwind-prefixer";
 
-// Classes with template literals does not work (yet?)
-const e = html`<h1 class=" ${" TEMPLATE_1 "} ${" TEMPLATE_2 "} " ></h1>`;
-const f = html`<h2 class=" absolute ${`TEMPLATE_3`} flex" ></h2>`;
+export const tw = createPrefixer( "my-prefix-" );
 
-// becomes
+// my-component.js
+import { tw } from "./prefix.js";
 
-const a = html`<h1> Hello, world</h1>`;
-const b =
-  html`<h1 class="fuzz-flex fuzz-flex-1 fuzz-unrelated-non-tailwind-class"></h1>`;
-const c = html`<h1 class="hover:fuzz-flex"></h1>`;
-const d = html`<h1 class="sm:focus:hover:fuzz-flex"></h1>`;
+const prefixedClasses = tw( "flex p-1 m-1 sm:hover:p-4" );
 
-// Classes with template literals does not work (yet?)
-const e = html`<h1 class=" ${" TEMPLATE_1 "} ${" TEMPLATE_2 "} " ></h1>`;
-const f = html`<h2 class=" absolute ${`TEMPLATE_3`} flex" ></h2>`;
+// After this file is built
+const prefixedClasses = tw.noop(
+  "my-prefix-flex my-prefix-p-1 my-prefix-m-1 my-prefix-sm:hover:p-4",
+);
 ```

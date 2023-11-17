@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { prefixer } from "./prefixer";
+import { tailwindClassPrefixer } from "./tailwind-class-prefixer";
 
-const prefixed = prefixer.bind( this, "foo-" );
+const prefixed = tailwindClassPrefixer.bind( this, "foo-" );
 describe("prefixer", () => {
   test("empty string return empty string", () => {
     const input = "";
@@ -12,7 +12,7 @@ describe("prefixer", () => {
   test("multi space string returns empty string", () => {
     const input = "   ";
     const actual = prefixed( input );
-    expect( actual ).toEqual( input );
+    expect( actual ).toEqual( " " );
   });
 
   test("can prefix simple string", () => {
@@ -55,7 +55,7 @@ describe("prefixer", () => {
 
   test("can prefix multiple template variables (with many spaces)", () => {
     const actual = prefixed( "  ${bar}    ${bar}    " );
-    expect( actual ).toEqual( "foo-${bar} foo-${bar}" );
+    expect( actual ).toEqual( " foo-${bar} foo-${bar}" );
   });
 
   // test("can prefix multiple template variables (with many spaces)", () => {

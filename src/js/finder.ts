@@ -33,7 +33,6 @@ export function findery(
 
     const endIndex = endPart.indexOf( searchEnd );
     if ( endIndex === -1 ) {
-      // TODO: We can prefix template literals here, if we want to.
       return matches;
     }
 
