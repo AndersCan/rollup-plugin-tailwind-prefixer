@@ -40,9 +40,8 @@ In your code:
 
 ```js
 // prefix.js
-import { createPrefixer } from "rollup-plugin-tailwind-prefixer/create-prefixer";
-
-export const tw = createPrefixer( "my-prefix-" );
+import { prefixer } from "rollup-plugin-tailwind-prefixer/prefixer";
+export const tw = prefixer.bind( undefined, "my-prefix-" );
 
 // my-component.js
 import { tw } from "./prefix.js";

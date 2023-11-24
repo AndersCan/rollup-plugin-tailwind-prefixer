@@ -20,23 +20,12 @@ export default defineConfig( {
     lib: {
       entry: {
         index: path.resolve( process.cwd(), "./src/index.ts" ),
-        "create-prefixer": path.resolve(
-          process.cwd(),
-          "./src/create-prefixer.ts",
-        ),
+        prefixer: path.resolve( process.cwd(), "./src/prefixer.ts" ),
       },
       formats: [ "es", "cjs" ],
     },
   },
   plugins: [
-    // tailwindPrefixerCss({
-    //   prefix: "my-prefix-",
-    //   classExclude: "darkmode",
-    // }),
-    // tailwindPrefixer( {
-    //   prefix: "fuzz-",
-    //   include: "./tests/**/*.fixture.ts",
-    // } ),
     dts( {
       exclude: [ "./**/*.test.ts", "./**/*.bench.ts" ],
     } ),

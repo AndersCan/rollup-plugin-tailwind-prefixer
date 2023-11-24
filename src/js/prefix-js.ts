@@ -41,7 +41,7 @@ export function prefixJs( options: PrefixJsOption, code: string, ast: Node ) {
         if ( node.callee.type === "Identifier" ) {
           if ( node.callee.name === options.functionName ) {
             inPrefixMode = true;
-            if ( options.postPrefixFunctionName ) {
+            if ( options.postPrefixFunctionName !== undefined ) {
               const fnStart = nodeStart;
               const fnEnd = nodeStart + options.functionName.length;
               ms.update( fnStart, fnEnd, options.postPrefixFunctionName );

@@ -30,7 +30,7 @@ const prefixedWithNoop = ( code: string ) => {
     {
       prefix: "foo-",
       functionName: "tw",
-      postPrefixFunctionName: "tw.noop",
+      postPrefixFunctionName: "",
     },
     code,
     ast as estree.Node,
@@ -152,23 +152,23 @@ describe("prefixJs - prefixes", () => {
   });
 });
 
-describe("prefixJs - can prefix and swap fn", () => {
+describe("prefixJs - can remove function call", () => {
   test("can prefix simple string", async () => {
     const actual = prefixedWithNoop( `tw("flex")` );
 
-    await jsEqual( actual, `tw.noop("foo-flex")` );
+    await jsEqual( actual, `("foo-flex")` );
   });
 
   test("can prefix simple string with spaces", async () => {
     const actual = prefixedWithNoop( `tw ( " flex " ) ` );
 
-    await jsEqual( actual, `tw.noop(" foo-flex")` );
+    await jsEqual( actual, `(" foo-flex")` );
   });
 
   test("skips variable", async () => {
     const actual = prefixedWithNoop( `tw(bar)` );
 
-    await jsEqual( actual, `tw.noop(bar)` );
+    await jsEqual( actual, `bar` );
   });
 
   test.todo(
