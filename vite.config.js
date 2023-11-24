@@ -20,6 +20,10 @@ export default defineConfig( {
     lib: {
       entry: {
         index: path.resolve( process.cwd(), "./src/index.ts" ),
+        "create-prefixer": path.resolve(
+          process.cwd(),
+          "./src/create-prefixer.ts",
+        ),
       },
       formats: [ "es", "cjs" ],
     },

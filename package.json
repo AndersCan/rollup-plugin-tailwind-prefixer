@@ -14,6 +14,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "types": "./dist/src/index.d.ts"
+    },
+    "./create-prefixer": {
+      "import": "./dist/create-prefixer.js",
+      "require": "./dist/create-prefixer.cjs",
+      "types": "./dist/src/create-prefixer.d.ts"
     }
   },
   "imports": {

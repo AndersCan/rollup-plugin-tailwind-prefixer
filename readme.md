@@ -40,7 +40,7 @@ In your code:
 
 ```js
 // prefix.js
-import { createPrefixer } from "rollup-plugin-tailwind-prefixer";
+import { createPrefixer } from "rollup-plugin-tailwind-prefixer/create-prefixer";
 
 export const tw = createPrefixer( "my-prefix-" );
 
