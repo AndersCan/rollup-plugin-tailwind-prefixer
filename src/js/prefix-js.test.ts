@@ -56,22 +56,22 @@ describe("prefixJs - prefixes", () => {
   });
 
   test("can prefix simple string", () => {
-    const actual = prefixed( `html\`<p class="\${tw("flex")}"></p>\`` );
-    expect( actual ).toEqual( `html\`<p class="\${tw("foo-flex")}"></p>\`` );
+    const actual = prefixed( "html`<p class=\"${tw(\"flex\")}\"></p>`" );
+    expect( actual ).toEqual( "html`<p class=\"${tw(\"foo-flex\")}\"></p>`" );
   });
 
   test("can prefix simple string - 2", () => {
     const actual = prefixed(
-      `html\`<pew-pew class="\${tw("flex")}""></pew-pew>\``,
+      "html`<pew-pew class=\"${tw(\"flex\")}\"\"></pew-pew>`",
     );
     expect( actual ).toEqual(
-      `html\`<pew-pew class="\${tw("foo-flex")}""></pew-pew>\``,
+      "html`<pew-pew class=\"${tw(\"foo-flex\")}\"\"></pew-pew>`",
     );
   });
 
   test("does not prefix variables", () => {
     const actual = prefixed(
-      `html\`<pew-pew class="\${tw(foo, bar)}""></pew-pew>\``,
+      "html`<pew-pew class=\"${tw(foo, bar)}\"\"></pew-pew>`",
     );
     expect( actual ).toEqual( undefined );
   });
@@ -85,51 +85,60 @@ describe("prefixJs - prefixes", () => {
     );
   });
 
-  test("can prefix multi string", () => {
+  test("maintains correct whitespace with static variable static", () => {
     const actual = prefixed(
-      `html\`<p class="\${tw("flex flex-1 m-1")}></p>\``,
+      "html`<pew-pew class=\"${tw(`static ${variable} static`)}\"></pew-pew>`",
     );
     expect( actual ).toEqual(
-      `html\`<p class="\${tw("foo-flex foo-flex-1 foo-m-1")}></p>\``,
+      "html`<pew-pew class=\"${tw(`foo-static ${variable} foo-static`)}\"></pew-pew>`",
+    );
+  });
+
+  test("can prefix multi string", () => {
+    const actual = prefixed(
+      "html`<p class=\"${tw(\"flex flex-1 m-1\")}></p>`",
+    );
+    expect( actual ).toEqual(
+      "html`<p class=\"${tw(\"foo-flex foo-flex-1 foo-m-1\")}></p>`",
     );
   });
 
   test("can prefix multi string - 2", () => {
     const actual = prefixed(
-      `html\`<pew-pew class="\${tw("flex flex-1 m-1")}"></pew-pew>\``,
+      "html`<pew-pew class=\"${tw(\"flex flex-1 m-1\")}\"></pew-pew>`",
     );
     expect( actual ).toEqual(
-      `html\`<pew-pew class="\${tw("foo-flex foo-flex-1 foo-m-1")}"></pew-pew>\``,
+      "html`<pew-pew class=\"${tw(\"foo-flex foo-flex-1 foo-m-1\")}\"></pew-pew>`",
     );
   });
 
   test("can prefix utility classes", async () => {
     const actual = prefixed(
-      `html\`<p class="yxh\${tw("sm:flex md:flex-1 hover:underline")}"></p>\``,
+      "html`<p class=\"yxh${tw(\"sm:flex md:flex-1 hover:underline\")}\"></p>`",
     );
     await jsEqual(
       actual,
-      `html\`<p class="yxh\${tw("sm:foo-flex md:foo-flex-1 hover:foo-underline")}"></p>\``,
+      "html`<p class=\"yxh${tw(\"sm:foo-flex md:foo-flex-1 hover:foo-underline\")}\"></p>`",
     );
   });
 
-  test("can prefix template variables", () => {
-    const actual = prefixed( `html\`class="\${tw("\${bar}")}"\`` );
-    expect( actual ).toEqual( `html\`class="\${tw("foo-\${bar}")}"\`` );
-  });
-
   test(`can prefix template literal variable with "`, () => {
-    const actual = prefixed( `html\`class="\${tw(\`\${"literal"}\`)}"\`` );
-    expect( actual ).toEqual( `html\`class="\${tw(\`\${"foo-literal"}\`)}"\`` );
+    const actual = prefixed( "html`class=\"${tw(`${\"literal\"}`)}\"`" );
+    expect( actual ).toEqual( "html`class=\"${tw(`${\"foo-literal\"}`)}\"`" );
   });
 
   test("only prefixes the first of multiple template variables not separated by a space", () => {
-    const actual = prefixed( `html\`class="\${tw("\${bar}\${bar}")}"\`` );
-    expect( actual ).toEqual( `html\`class="\${tw("foo-\${bar}\${bar}")}"\`` );
+    const actual = prefixed( "html`class=\"${tw(\"${bar}${bar}\")}\"`" );
+    expect( actual ).toEqual( "html`class=\"${tw(\"foo-${bar}${bar}\")}\"`" );
+  });
+
+  test("edge case: can prefix a string that contains a template variable (is a string)", () => {
+    const actual = prefixed( "html`class=\"${tw(\"${bar}\")}\"`" );
+    expect( actual ).toEqual( "html`class=\"${tw(\"foo-${bar}\")}\"`" );
   });
 
   test("does not prefix template variables -- impossible to know what they represent", () => {
-    const actual = prefixed( `html\`class="\${tw(\`\${bar} \${bar}\`)}"\`` );
+    const actual = prefixed( "html`class=\"${tw(`${bar} ${bar}`)}\"`" );
     expect( actual ).toEqual( undefined );
   });
 
@@ -138,16 +147,16 @@ describe("prefixJs - prefixes", () => {
       "html`<p class=\"${tw(\"  ${bar}     ${bar}  \")}\"></p>`",
     );
     expect( actual ).toEqual(
-      "html`<p class=\"${tw(\" foo-${bar} foo-${bar}\")}\"></p>`",
+      "html`<p class=\"${tw(\" foo-${bar} foo-${bar} \")}\"></p>`",
     );
   });
 
   test("prefixes tailwind utility classes correctly", () => {
     const actual = prefixed(
-      `html\` class="\${tw("dark:hover:focus:flex")}"\``,
+      "html` class=\"${tw(\"dark:hover:focus:flex\")}\"`",
     );
     expect( actual ).toEqual(
-      `html\` class="\${tw("dark:hover:focus:foo-flex")}"\``,
+      "html` class=\"${tw(\"dark:hover:focus:foo-flex\")}\"`",
     );
   });
 });
@@ -162,7 +171,7 @@ describe("prefixJs - can remove function call", () => {
   test("can prefix simple string with spaces", async () => {
     const actual = prefixedWithNoop( `tw ( " flex " ) ` );
 
-    await jsEqual( actual, `(" foo-flex")` );
+    await jsEqual( actual, `(" foo-flex ")` );
   });
 
   test("skips variable", async () => {

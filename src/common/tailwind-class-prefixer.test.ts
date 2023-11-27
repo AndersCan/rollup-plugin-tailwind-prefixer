@@ -12,7 +12,7 @@ describe("prefixer", () => {
   test("multi space string returns empty string", () => {
     const input = "   ";
     const actual = prefixed( input );
-    expect( actual ).toEqual( " " );
+    expect( actual ).toEqual( "  " );
   });
 
   test("can prefix simple string", () => {
@@ -55,12 +55,6 @@ describe("prefixer", () => {
 
   test("can prefix multiple template variables (with many spaces)", () => {
     const actual = prefixed( "  ${bar}    ${bar}    " );
-    expect( actual ).toEqual( " foo-${bar} foo-${bar}" );
+    expect( actual ).toEqual( " foo-${bar} foo-${bar} " );
   });
-
-  // test("can prefix multiple template variables (with many spaces)", () => {
-  //   const actual = (`class="one md:one" class="two md:two" class="three md:three"`);
-  //   const woop = actual.split(/class="([a-zA-Z0-9_ -:]+)"/);
-  //   expect( woop ).toEqual( [] );
-  // });
 });

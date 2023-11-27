@@ -18,8 +18,7 @@ export interface PrefixJsOption {
 
   /**
    * After prefixing, change function name.
-   * Should be used in conjunction with `createPrefixer`. In which case the name
-   * should be `${functionName}.noop` (ie: `tw.noop`)
+   * In almost all cases, should be set to empty string
    */
   postPrefixFunctionName: string;
 }

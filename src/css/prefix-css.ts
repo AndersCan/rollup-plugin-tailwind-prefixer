@@ -12,7 +12,8 @@ interface Props {
 export function prefixCss( props: Props, code: string ) {
   const ast = csstree.parse( code );
   const prefixedAst = classPrefixer( props.prefix, ast );
-  const nast = props.darkModeReplacement
+
+  const darkModeReplaced = props.darkModeReplacement
     ? removeAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
@@ -24,6 +25,6 @@ export function prefixCss( props: Props, code: string ) {
     : prefixedAst;
 
   return {
-    code: csstree.generate( nast ),
+    code: csstree.generate( darkModeReplaced ),
   };
 }

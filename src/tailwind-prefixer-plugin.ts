@@ -1,14 +1,14 @@
-import { createFilter } from "@rollup/pluginutils";
+import { createFilter, FilterPattern } from "@rollup/pluginutils";
 
 import { Node } from "estree";
-import { prefixCss } from "./css/css";
+import { prefixCss } from "./css/prefix-css";
 import { prefixJs, PrefixJsOption } from "./js/prefix-js";
 
 const UNCHANGED = null;
 
 interface JSOptions extends Omit<PrefixJsOption, "prefix"> {
-  include?: string;
-  exclude?: string;
+  include?: FilterPattern;
+  exclude?: FilterPattern;
 }
 interface Options {
   /**
@@ -16,8 +16,8 @@ interface Options {
    */
   prefix: string;
   css?: {
-    include?: string;
-    exclude?: string;
+    include?: FilterPattern;
+    exclude?: FilterPattern;
     /**
      * Replace the Media query for darkmode with a css selector
      */
@@ -59,21 +59,3 @@ export function tailwindPrefixerPlugin( options: Options ) {
     },
   };
 }
-
-tailwindPrefixerPlugin( {
-  prefix: "my-prefix-",
-  js: {
-    functionName: "tw",
-  },
-} );
-
-tailwindPrefixerPlugin( {
-  prefix: "my-prefix-",
-  js: {
-    functionName: "tw",
-    postPrefixFunctionName: "tw.noop",
-  },
-  css: {
-    darkModeReplacement: ".dark-mode",
-  },
-} );

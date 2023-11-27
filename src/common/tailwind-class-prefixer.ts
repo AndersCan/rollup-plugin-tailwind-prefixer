@@ -6,11 +6,11 @@ export function tailwindClassPrefixer( prefix: string, classNames: string ) {
   if ( !classNames ) return classNames;
 
   const startsWithSpace = classNames[0] === " ";
+  const endsWithSpace = classNames[classNames.length - 1] === " ";
 
-  const trimmed = classNames; // .replace(/\s+/g, " ");
-  if ( !trimmed || trimmed === " " ) return classNames;
+  if ( !classNames || classNames === " " ) return classNames;
 
-  const splitWords = trimmed.split( " " );
+  const splitWords = classNames.split( " " );
 
   const splitWordsLength = splitWords.length;
   const endResult = [];
@@ -28,7 +28,10 @@ export function tailwindClassPrefixer( prefix: string, classNames: string ) {
     endResult.push( `${utility}:${prefix}${classname}` );
   }
 
-  return `${startsWithSpace ? " " : ""}${endResult.join( " " )}`;
+  const pre = startsWithSpace ? " " : "";
+  const post = endsWithSpace ? " " : "";
+
+  return `${pre}${endResult.join( " " )}${post}`;
 }
 
 function splitAt( str: string, index: number ) {
