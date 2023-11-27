@@ -1,16 +1,16 @@
 import * as csstree from "css-tree";
 import * as prettier from "prettier";
 import { describe, expect, test } from "vitest";
-import { removeAtRule } from "./remove-at-rule";
+import { replaceAtRule } from "./replace-at-rule";
 
-describe("removeAtRule", () => {
+describe("replaceAtRule", () => {
   test("can change simple css class", async () => {
     const expected = `.foo {display: none;}`;
-    const actual = removeAtRule(
+    const actual = replaceAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
         mediaFeatureValue: "dark",
-        prefixAsString: "",
+        replaceSelector: "",
       },
       `
     @media (prefers-color-scheme: dark) {
@@ -25,11 +25,11 @@ describe("removeAtRule", () => {
     html.darkmode .foo {display: none;} 
     html.darkmode .bar {display: flex;}
     `;
-    const actual = removeAtRule(
+    const actual = replaceAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
         mediaFeatureValue: "dark",
-        prefixAsString: "html.darkmode",
+        replaceSelector: "html.darkmode",
       },
       `
     @media (prefers-color-scheme: dark) {
@@ -51,11 +51,11 @@ describe("removeAtRule", () => {
       }
     `;
     // "prefers-color-scheme"
-    const actual = removeAtRule(
+    const actual = replaceAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
         mediaFeatureValue: "dark",
-        prefixAsString: "html.darkmode",
+        replaceSelector: "html.darkmode",
       },
       `
       @media (prefers-color-scheme: dark) {
@@ -83,11 +83,11 @@ describe("removeAtRule", () => {
       }
     `;
 
-    const actual = removeAtRule(
+    const actual = replaceAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
         mediaFeatureValue: "dark",
-        prefixAsString: "html.darkmode",
+        replaceSelector: "html.darkmode",
       },
       `
       @media (pointer: coarse) {
@@ -117,11 +117,11 @@ describe("removeAtRule", () => {
       }
     `;
 
-    const actual = removeAtRule(
+    const actual = replaceAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
         mediaFeatureValue: "dark",
-        prefixAsString: "html.darkmode",
+        replaceSelector: "html.darkmode",
       },
       `
       @media (pointer: coarse) {
@@ -151,11 +151,11 @@ describe("removeAtRule", () => {
     }
     `;
 
-    const actual = removeAtRule(
+    const actual = replaceAtRule(
       {
         mediaFeatureName: "prefers-color-scheme",
         mediaFeatureValue: "dark",
-        prefixAsString: "html.darkmode",
+        replaceSelector: "html.darkmode",
       },
       `
       .group:hover .group-hover\:underline {

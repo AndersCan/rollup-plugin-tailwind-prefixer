@@ -179,11 +179,16 @@ describe("prefixJs - can remove function call", () => {
 
     await jsEqual( actual, `bar` );
   });
+});
 
-  test.todo(
-    "prints warning when a variable (Identifier) are passed directly",
-    async () => {},
-  );
+describe("prefixJs - nested tw calls fail ", () => {
+  test("nested tw fails", async () => {
+    expect(() => prefixed( "tw(`one ${tw(\"two\")} three`)" )).toThrow();
+  });
+
+  test("nested tw calls fails with variable", async () => {
+    expect(() => prefixed( "tw(`one ${tw(bar)} three`)" )).toThrow();
+  });
 });
 
 async function jsEqual( a: string = "", b: string ) {

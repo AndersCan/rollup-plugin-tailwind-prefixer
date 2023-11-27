@@ -3,6 +3,7 @@ import MagicString from "magic-string";
 import { Node } from "estree";
 import { walk } from "estree-walker";
 import { tailwindClassPrefixer } from "../common/tailwind-class-prefixer";
+import { errorIf } from "../utils";
 
 const UNCHANGED = null;
 
@@ -39,6 +40,11 @@ export function prefixJs( options: PrefixJsOption, code: string, ast: Node ) {
       if ( node.type === "CallExpression" ) {
         if ( node.callee.type === "Identifier" ) {
           if ( node.callee.name === options.functionName ) {
+            errorIf(
+              inPrefixMode,
+              "WARNING: Nested prefix calls will not work as expected and most likely a bug",
+              node,
+            );
             inPrefixMode = true;
             if ( options.postPrefixFunctionName !== undefined ) {
               const fnStart = nodeStart;

@@ -4,6 +4,24 @@ import { describe, expect, test } from "vitest";
 import { prefixCss } from "./prefix-css";
 
 describe("prefixCss", () => {
+  test("plugin can just prefix", async () => {
+    const expected = `
+    @media (prefers-color-scheme: dark) {
+      .my-prefix-foo {display: none;}
+    }`;
+    const actual = prefixCss(
+      {
+        prefix: "my-prefix-",
+        darkModeReplacement: false,
+      },
+      `
+    @media (prefers-color-scheme: dark) {
+      .foo {display: none;}
+    }`,
+    ).code;
+    await cssEqual( actual, expected );
+  });
+
   test("plugin prefixes in the expected order -> prefix then dark mode replacement", async () => {
     const expected = `
     .my-dark-mode .my-prefix-foo {

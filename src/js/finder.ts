@@ -51,23 +51,3 @@ export function findery(
   }
   return matches;
 }
-
-function foop( search: string ) {
-  let i = -1;
-  let valid = 0;
-  while ( i < search.length ) {
-    i++;
-    const char = search[i];
-
-    if ( char === `"` ) {
-      if ( valid === 0 ) return i;
-      continue;
-    }
-    if ( char === `$` ) {
-      if ( search[i] === `{` ) {
-        valid += 1;
-      }
-    }
-    if ( valid === 0 && char === `"` ) return i;
-  }
-}

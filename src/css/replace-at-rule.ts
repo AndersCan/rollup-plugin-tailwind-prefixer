@@ -3,25 +3,24 @@ import * as csstree from "css-tree";
 interface Props {
   mediaFeatureName: string;
   mediaFeatureValue: string;
-  prefixAsString: string;
+  replaceSelector: string;
 }
 
 /**
- * Can remove `@media (prefers-color-scheme: dark) {}` and prefix content
+ * Replaces the `@media (prefers-color-scheme: dark) {}` with a css class as prefix
  */
-export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
+export function replaceAtRule( props: Props, css: string | csstree.CssNode ) {
   const ast = typeof css === "string" ? csstree.parse( css ) : css;
   let rootScope: csstree.StyleSheet | undefined = undefined;
   let currentChildren: csstree.List<csstree.CssNode> | undefined = undefined;
-  let previousChildren: csstree.List<csstree.CssNode> | undefined = undefined;
   let lastBlocks: csstree.Block[] = [];
   let atRuleCounter = 0;
+
   // Handle darkmode
   csstree.walk( ast, {
     enter: ( node: csstree.CssNode ) => {
       // @ts-expect-error
       if ( node.children ) {
-        previousChildren = currentChildren;
         // @ts-expect-error
         currentChildren = node.children;
       }
@@ -34,6 +33,7 @@ export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
         rootScope = node;
       }
       if ( node.type === "Atrule" ) {
+        /* c8 ignore next 4 */
         if ( !node.block ) {
           console.warn( "empty at rule (no block) -- might be an error" );
           return;
@@ -58,6 +58,7 @@ export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
                           && nnn.value.name === props.mediaFeatureValue
                         ) {
                           if ( !parentBlock ) {
+                            /* c8 ignore next 5 */
                             if ( !rootScope ) {
                               throw new Error(
                                 "rootScope should be the first thing defined",
@@ -66,7 +67,7 @@ export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
                             const modified = currentBlock.children.map(
                               ( el ) => {
                                 return selectorPrefix(
-                                  props.prefixAsString,
+                                  props.replaceSelector,
                                   el,
                                 );
                               },
@@ -91,7 +92,10 @@ export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
 
                           parentBlock.children.appendList(
                             currentBlock.children.map( ( el ) => {
-                              return selectorPrefix( props.prefixAsString, el );
+                              return selectorPrefix(
+                                props.replaceSelector,
+                                el,
+                              );
                             } ),
                           );
                         }
@@ -105,11 +109,6 @@ export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
           }
         }
       }
-      // //@ts-expect-error
-      // if (node.children) {
-      //   //@ts-expect-error
-      //   firstChildren = node.children;
-      // }
     },
     leave: ( node: csstree.CssNode ) => {
       if ( node.type === "Atrule" ) {
@@ -121,7 +120,6 @@ export function removeAtRule( props: Props, css: string | csstree.CssNode ) {
     },
   } );
 
-  // return csstree.generate(ast);
   return ast;
 }
 
@@ -129,13 +127,13 @@ function selectorPrefix( prefix: string, ast: csstree.CssNode ) {
   const prefixAst = csstree.parse( prefix );
   csstree.walk( ast, ( node ) => {
     if ( node.type === "Selector" ) {
-      node.children = node.children.prependData(
+      node.children.prependData(
         csstree.fromPlainObject( {
           type: "Combinator",
           name: " ",
         } ),
       );
-      node.children = node.children.prependData( prefixAst );
+      node.children.prependData( prefixAst );
     }
   } );
 

@@ -15,6 +15,7 @@ interface Options {
    * Prefix - will be added to JS and **all** css classes
    */
   prefix: string;
+  js: JSOptions;
   css?: {
     include?: FilterPattern;
     exclude?: FilterPattern;
@@ -23,7 +24,6 @@ interface Options {
      */
     darkModeReplacement?: false | string;
   };
-  js: JSOptions;
 }
 export function tailwindPrefixerPlugin( options: Options ) {
   const { prefix, css = {}, js } = options;

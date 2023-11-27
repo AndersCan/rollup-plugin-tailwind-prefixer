@@ -1,11 +1,15 @@
 import * as csstree from "css-tree";
 import { classPrefixer } from "./class-prefixer";
-import { removeAtRule } from "./remove-at-rule";
+import { replaceAtRule } from "./replace-at-rule";
 
 interface Props {
+  /**
+   * CSS prefix for all classes
+   */
   prefix: string;
   /**
-   * Should DarkMode be replaced by another CSS selector
+   * Optional. The selector replacement for for the `:dark` media query
+   * @default false
    */
   darkModeReplacement: false | string;
 }
@@ -14,17 +18,21 @@ export function prefixCss( props: Props, code: string ) {
   const prefixedAst = classPrefixer( props.prefix, ast );
 
   const darkModeReplaced = props.darkModeReplacement
-    ? removeAtRule(
-      {
-        mediaFeatureName: "prefers-color-scheme",
-        mediaFeatureValue: "dark",
-        prefixAsString: props.darkModeReplacement,
-      },
-      prefixedAst,
-    )
+    ? replaceDarkMode( props.darkModeReplacement, prefixedAst )
     : prefixedAst;
 
   return {
     code: csstree.generate( darkModeReplaced ),
   };
+}
+
+function replaceDarkMode( replace: string, ast: csstree.CssNode ) {
+  return replaceAtRule(
+    {
+      mediaFeatureName: "prefers-color-scheme",
+      mediaFeatureValue: "dark",
+      replaceSelector: replace,
+    },
+    ast,
+  );
 }
