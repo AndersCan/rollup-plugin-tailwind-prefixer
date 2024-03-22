@@ -14,7 +14,6 @@ Cons:
 
 1. Not needed if your end-users already support the `is()` selector
 2. Some boilerplate to setup the `tw(...)` function
-3. My first rollup-plugin (code has unit tests)
 
 > [!TIP]
 > Checkout the [demo](https://stackblitz.com/edit/vitejs-vite-ozmt7k?file=src%2Fmain.ts) to see it in action
